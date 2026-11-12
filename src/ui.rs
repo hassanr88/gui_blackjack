@@ -11,3 +11,6 @@ pub mod grid;
 --------------------------------------------
 */
 // Add modules below
+pub mod label;
+pub mod still_image;
+pub mod text_button;

@@ -14,6 +14,10 @@ The program then checks to see who wins.
 
 mod ui;
 mod utils;
+use crate::utils::preload_image::TextureManager;
+use crate::ui::label::Label;
+use crate::ui::still_image::StillImage;
+use crate::ui::text_button::TextButton;
 
 use macroquad::prelude::*;
 
@@ -36,7 +40,7 @@ async fn main() {
     
     loop {
         clear_background(WHITE);
-
+        
         next_frame().await;
     }
 }
