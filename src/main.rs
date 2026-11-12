@@ -18,6 +18,7 @@ use crate::utils::preload_image::TextureManager;
 use crate::ui::label::Label;
 use crate::ui::still_image::StillImage;
 use crate::ui::text_button::TextButton;
+use crate::ui::grid::draw_grid;
 
 use macroquad::prelude::*;
 
@@ -25,8 +26,8 @@ use macroquad::prelude::*;
 fn window_conf() -> Conf {
     Conf {
         window_title: "gui_blackjack".to_string(),
-        window_width: 1024,
-        window_height: 768,
+        window_width: 1050,
+        window_height: 800,
         fullscreen: false,
         high_dpi: true,
         window_resizable: true,
@@ -39,8 +40,9 @@ fn window_conf() -> Conf {
 async fn main() {
     
     loop {
-        clear_background(WHITE);
-        
+        clear_background(DARKGREEN);
+        draw_rectangle(100.0, 50.0, 850.0, 700.0, GREEN);
+        draw_grid(50.0, WHITE);
         next_frame().await;
     }
 }
