@@ -27,7 +27,7 @@ fn window_conf() -> Conf {
     Conf {
         window_title: "gui_blackjack".to_string(),
         window_width: 1050,
-        window_height: 800,
+        window_height: 850,
         fullscreen: false,
         high_dpi: true,
         window_resizable: true,
@@ -41,8 +41,10 @@ async fn main() {
     
     loop {
         clear_background(DARKGREEN);
-        draw_rectangle(100.0, 50.0, 850.0, 700.0, GREEN);
-        draw_grid(50.0, WHITE);
+        draw_rectangle(100.0, 50.0, 850.0, 750.0, GREEN);
+        draw_rectangle(200.0, 200.0, 650.0, 200.0, DARKGREEN);
+        draw_rectangle(200.0, 500.0, 650.0, 200.0, DARKGREEN);
+        //draw_grid(50.0, WHITE);
         next_frame().await;
     }
 }
