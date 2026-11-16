@@ -43,17 +43,32 @@ fn window_conf() -> Conf {
 async fn main() {
     let tm = TextureManager::new();
     tm.preload_all(&["assets/card_front.png", "assets/card_back.png"]).await;
-    let img_card = StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 200.0, 60.0, true, 1.0);
+    let mut player_cards: Vec<StillImage> = vec![
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 250.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
+    ];
+    let mut dealer_cards: Vec<StillImage> = vec![
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 150.0, 200.0, 250.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
+    ];
     let lbl_title = Label::new("Blackjack", 400.0, 150.0, 60);
-    let lbl_money = Label::new("Cash: $100.00", 150.0, 150.0, 30);
-    let lbl_dealerscore = Label::new("Dealer Hand (?)", 210.0, 235.0, 40);
-    let lbl_playerscore = Label::new("Player Hand ()", 210.0, 535.0, 40);
+    let mut lbl_money = Label::new("Cash: $100.00", 150.0, 100.0, 30);
+    let lbl_dealerscore = Label::new("Dealer Hand (?)", 210.0, 185.0, 40);
+    let lbl_playerscore = Label::new("Player Hand ()", 210.0, 485.0, 40);
     let mut txt_bet = TextInput::new(200.0, 900.0, 300.0, 50.0, 25.0);
     let mut btn_hit = TextButton::new(350.0, 750.0, 150.0, 50.0, "Hit", GOLD, DARKBROWN, 30);
     let mut btn_stand = TextButton::new(550.0, 750.0, 150.0, 50.0, "Stand", GOLD, DARKBROWN, 30);
     let mut btn_exit = TextButton::new(750.0, 900.0, 150.0, 50.0, "Exit", RED, BLACK, 30);
     let mut btn_restart = TextButton::new(750.0, 750.0, 150.0, 50.0, "Restart", ORANGE, BLACK, 30);
     let mut btn_deal = TextButton::new(150.0, 750.0, 150.0, 50.0, "Deal", BLUE, DARKBLUE, 30);
+    let mut account = 100.0;
+    let mut game_start = false;
     txt_bet
         .set_prompt("Enter in bet amount...")
         .set_allowed_chars("1234567890.")
@@ -70,11 +85,35 @@ async fn main() {
         draw_rectangle(200.0, 500.0, 650.0, 200.0, DARKGREEN);
         if btn_hit.click() {}
         if btn_stand.click() {}
-        if btn_exit.click() {}
-        if btn_restart.click() {}
-        if btn_deal.click() {}
-        //draw_grid(50.0, WHITE);
+        if btn_exit.click() {
+            break;
+        }
+        if btn_restart.click() {
+            btn_deal.enabled = true;
+            txt_bet.set_enabled(true);
+        }
+        if btn_deal.click() {
+            let bet = txt_bet.get_text().trim().parse().unwrap_or(0.0);
+            if bet < account && bet > 0.0 {
+                let n = account - bet;
+                lbl_money.set_text(format!("Cash: ${:.2}", n));
+                txt_bet.set_enabled(false);
+                account = n;
+                btn_deal.enabled = false;
+                game_start = true;
+            } else {
+            }
+        }
+        draw_grid(50.0, WHITE);
         lbl_money.draw();
+        if game_start {
+            for i in 0..player_cards.len() {
+                player_cards[i].draw();
+            }
+            for i in 0..dealer_cards.len() {
+                dealer_cards[i].draw();
+            }
+        }
         txt_bet.draw();
         lbl_title.draw();
         lbl_dealerscore.draw();
