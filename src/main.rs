@@ -22,6 +22,7 @@ use crate::ui::still_image::StillImage;
 use crate::ui::text_button::TextButton;
 use crate::ui::text_input::TextInput;
 use crate::utils::preload_image::TextureManager;
+use miniquad::date;
 
 use macroquad::prelude::*;
 
@@ -43,6 +44,9 @@ fn window_conf() -> Conf {
 async fn main() {
     let tm = TextureManager::new();
     tm.preload_all(&["assets/card_front.png", "assets/card_back.png"]).await;
+    rand::srand(date::now() as u64);
+    let numcard = rand::gen_range(1, 14);
+    let group = rand::gen_range(1, 4);
     let mut player_cards: Vec<StillImage> = vec![
         StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
         StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 250.0, 500.0, true, 1.0),
@@ -91,10 +95,13 @@ async fn main() {
         if btn_restart.click() {
             btn_deal.enabled = true;
             txt_bet.set_enabled(true);
+            game_start = false;
+            account = 100.0;
+            lbl_money.set_text(format!("Cash: ${:.2}", account));
         }
         if btn_deal.click() {
             let bet = txt_bet.get_text().trim().parse().unwrap_or(0.0);
-            if bet < account && bet > 0.0 {
+            if bet <= account && bet > 0.0 {
                 let n = account - bet;
                 lbl_money.set_text(format!("Cash: ${:.2}", n));
                 txt_bet.set_enabled(false);
@@ -104,7 +111,7 @@ async fn main() {
             } else {
             }
         }
-        draw_grid(50.0, WHITE);
+        //draw_grid(50.0, WHITE);
         lbl_money.draw();
         if game_start {
             for i in 0..player_cards.len() {
