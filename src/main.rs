@@ -17,7 +17,7 @@ it also has a way to enter in a bet and actually bet on the black jack and win c
 mod ui;
 mod utils;
 use crate::ui::grid::draw_grid;
-use crate::ui::label::Label;
+use crate::ui::label::{self, Label};
 use crate::ui::still_image::StillImage;
 use crate::ui::text_button::TextButton;
 use crate::ui::text_input::TextInput;
@@ -40,26 +40,48 @@ fn window_conf() -> Conf {
     }
 }
 
+fn assigncard() {
+    
+}
+
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
     tm.preload_all(&["assets/card_front.png", "assets/card_back.png"]).await;
     rand::srand(date::now() as u64);
-    let numcard = rand::gen_range(1, 14);
-    let group = rand::gen_range(1, 4);
     let mut player_cards: Vec<StillImage> = vec![
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 250.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 205.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 310.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 415.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 520.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 625.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 730.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 835.0, 500.0, true, 1.0),
     ];
     let mut dealer_cards: Vec<StillImage> = vec![
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 150.0, 200.0, 250.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 150.0, 200.0, 450.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 205.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 310.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 415.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 520.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 625.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 730.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 835.0, 200.0, true, 1.0),
+    ];
+    let mut card_labels: Vec<Label> = vec![
+        Label::new("", 225.0, 600.0, 60),
+        Label::new("", 330.0, 600.0, 60),
+        Label::new("", 435.0, 600.0, 60),
+        Label::new("", 540.0, 600.0, 60),
+        Label::new("", 645.0, 600.0, 60),
+        Label::new("", 750.0, 600.0, 60),
+        Label::new("", 855.0, 600.0, 60),
+        Label::new("", 225.0, 300.0, 60),
+        Label::new("", 330.0, 300.0, 60),
+        Label::new("", 435.0, 300.0, 60),
+        Label::new("", 540.0, 300.0, 60),
+        Label::new("", 645.0, 300.0, 60),
+        Label::new("", 750.0, 300.0, 60),
+        Label::new("", 855.0, 300.0, 60),
     ];
     let lbl_title = Label::new("Blackjack", 400.0, 150.0, 60);
     let mut lbl_money = Label::new("Cash: $100.00", 150.0, 100.0, 30);
@@ -111,7 +133,7 @@ async fn main() {
             } else {
             }
         }
-        //draw_grid(50.0, WHITE);
+        draw_grid(50.0, WHITE);
         lbl_money.draw();
         if game_start {
             for i in 0..player_cards.len() {
