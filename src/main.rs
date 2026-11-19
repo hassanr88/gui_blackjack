@@ -40,32 +40,28 @@ fn window_conf() -> Conf {
     }
 }
 
-fn assigncard() {
-    
-}
-
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
     tm.preload_all(&["assets/card_front.png", "assets/card_back.png"]).await;
     rand::srand(date::now() as u64);
-    let mut player_cards: Vec<StillImage> = vec![
+    let player_cards: Vec<StillImage> = vec![
         StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 205.0, 500.0, true, 1.0),
         StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 310.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 415.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 520.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 625.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 730.0, 500.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 835.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 415.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 520.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 625.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 730.0, 500.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 835.0, 500.0, true, 1.0),
     ];
     let mut dealer_cards: Vec<StillImage> = vec![
         StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 205.0, 200.0, true, 1.0),
         StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 310.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 415.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 520.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 625.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 730.0, 200.0, true, 1.0),
-        StillImage::from_preload(tm.get_preload("assets/card_back.png").unwrap(), 100.0, 200.0, 835.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 415.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 520.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 625.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 730.0, 200.0, true, 1.0),
+        StillImage::from_preload(tm.get_preload("assets/card_front.png").unwrap(), 100.0, 200.0, 835.0, 200.0, true, 1.0),
     ];
     let mut card_labels: Vec<Label> = vec![
         Label::new("", 225.0, 600.0, 60),
@@ -95,6 +91,12 @@ async fn main() {
     let mut btn_deal = TextButton::new(150.0, 750.0, 150.0, 50.0, "Deal", BLUE, DARKBLUE, 30);
     let mut account = 100.0;
     let mut game_start = false;
+    let mut cards_revealed = 2;
+    let mut dealer_cards_revealed = 1;
+    let suit = rand::gen_range(1, 5);
+    let number = rand::gen_range(1, 14);
+    let suits: Vec<i32> = vec![1; 13];
+    let numbers: Vec<i32> = vec![1;4];
     txt_bet
         .set_prompt("Enter in bet amount...")
         .set_allowed_chars("1234567890.")
@@ -109,8 +111,19 @@ async fn main() {
         draw_rectangle(100.0, 50.0, 850.0, 800.0, GREEN);
         draw_rectangle(200.0, 200.0, 650.0, 200.0, DARKGREEN);
         draw_rectangle(200.0, 500.0, 650.0, 200.0, DARKGREEN);
-        if btn_hit.click() {}
-        if btn_stand.click() {}
+        if btn_hit.click() {
+            if cards_revealed < player_cards.len() {
+                cards_revealed += 1;
+            }
+        }
+        if btn_stand.click() {
+            if dealer_cards_revealed == 1 {
+                dealer_cards_revealed += 1;
+            }
+            if dealer_cards_revealed < dealer_cards.len() {
+                dealer_cards_revealed += 1;
+            }
+        }
         if btn_exit.click() {
             break;
         }
@@ -137,10 +150,27 @@ async fn main() {
         lbl_money.draw();
         if game_start {
             for i in 0..player_cards.len() {
-                player_cards[i].draw();
+                if i < cards_revealed {
+                    player_cards[i].draw();
+                    card_labels[i].draw();
+                    card_labels[i].set_text(&format!("{}{}", number, suit));
+                }
             }
             for i in 0..dealer_cards.len() {
-                dealer_cards[i].draw();
+                if dealer_cards_revealed == 1 {
+                    dealer_cards[1].draw();
+                    dealer_cards[0].draw();
+                    card_labels[8].draw();
+                    card_labels[8].set_text(&format!("{}{}", number, suit));
+                } else {
+                    dealer_cards[0].set_preload(tm.get_preload("assets/card_front.png").unwrap());
+                    card_labels[7].set_text(&format!("{}{}", number, suit));
+                    if i < dealer_cards_revealed {
+                        dealer_cards[i].draw();
+                        card_labels[i + 7].draw();
+                        card_labels[i].set_text(&format!("{}{}", number, suit));
+                    }
+                }
             }
         }
         txt_bet.draw();
