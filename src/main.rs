@@ -222,6 +222,8 @@ async fn main() {
     btn_restart.with_text_color(BLACK).with_hover_text_color(WHITE);
     btn_stand.with_text_color(BLACK).with_hover_text_color(WHITE);
     btn_hit.with_text_color(BLACK).with_hover_text_color(WHITE);
+    btn_hit.enabled = false;
+    btn_stand.enabled = false;
     loop {
         clear_background(DARKGREEN);
         draw_rectangle(100.0, 50.0, 850.0, 800.0, GREEN);
@@ -269,6 +271,8 @@ async fn main() {
                 player_hand.push(cards[1]);
                 dealer_hand.push(cards[2]);
                 dealer_hand.push(cards[3]);
+                btn_hit.enabled = true;
+                btn_stand.enabled = true;
                 game_start = true;
             } else {
             }
