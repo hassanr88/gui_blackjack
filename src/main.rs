@@ -237,12 +237,6 @@ async fn main() {
             calc_score_player = true;
         }
         if btn_stand.click() {
-            if dealer_cards_revealed == 1 {
-                dealer_cards_revealed += 1;
-            }
-            if dealer_cards_revealed < dealer_cards.len() {
-                dealer_cards_revealed += 1;
-            }
             stand = true;
             calc_score_dealer = true;
         }
@@ -294,9 +288,14 @@ async fn main() {
                 }
             }
             if stand == true {
-                for i in 2..dealer_cards_revealed {
-                    dealer_cards[i].set_preload(tm.get_preload(card_names[dealer_hand[i] as usize]).unwrap());
-                    dealer_cards[i].draw();
+                btn_hit.enabled = false;
+                while dealer_score < 17 {
+                    dealer_cards_revealed+=1;
+                    for i in 0..dealer_cards_revealed {
+                        dealer_cards[i].set_preload(tm.get_preload(card_names[dealer_hand[i] as usize]).unwrap());
+                        dealer_cards[i].draw();
+                        card_value(dealer_hand[i]);
+                    }
                 }
             }
             if calc_score_player == true {
