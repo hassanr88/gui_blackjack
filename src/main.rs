@@ -222,6 +222,7 @@ async fn main() {
     let mut hit = false;
     let mut stand = false;
     let mut deck_index = 4;
+    let mut bet: f64 = 0.0;
     txt_bet
         .set_prompt("Enter in bet amount...")
         .set_allowed_chars("1234567890.")
@@ -266,7 +267,7 @@ async fn main() {
             deck_index = 4;
         }
         if btn_deal.click() {
-            let bet = txt_bet.get_text().trim().parse().unwrap_or(0.0);
+            bet = txt_bet.get_text().trim().parse().unwrap_or(0.0);
             if bet <= account && bet > 0.0 {
                 let n = account - bet;
                 lbl_money.set_text(format!("Cash: ${:.2}", n));
@@ -338,6 +339,19 @@ async fn main() {
             }
             calc_score_player = false;
             calc_score_dealer = false;
+            if player_score > 21 {
+                
+            }
+            else if dealer_score > 21 {
+                account = account+bet*2.0;
+                lbl_money.set_text(format!("Cash: ${:.2}", account));
+            }
+            else if player_score == 21 {
+
+            }
+            else if dealer_score == 21 {
+
+            }
         }
 
         txt_bet.draw();
