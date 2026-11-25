@@ -41,7 +41,7 @@ fn window_conf() -> Conf {
     }
 }
 
-fn card_value(card: i32) -> i32 {
+fn card_value(card: i32, dealer_score: i32, player_score: i32) -> i32 {
     if card >= 48 {
         return 10;
     } else if card >= 44 {
@@ -49,7 +49,15 @@ fn card_value(card: i32) -> i32 {
     } else if card >= 40 {
         return 10;
     } else if card >= 36 {
-        return 11;
+        if dealer_score > 10 {
+            return 1;
+        }
+        else if player_score > 10 {
+            return 1;
+        }
+        else {
+            return 11;
+        }
     }
     card / 4 + 2
 }
@@ -213,6 +221,7 @@ async fn main() {
     let mut calc_score_dealer = false;
     let mut hit = false;
     let mut stand = false;
+    let mut deck_index = 4;
     txt_bet
         .set_prompt("Enter in bet amount...")
         .set_allowed_chars("1234567890.")
@@ -231,6 +240,9 @@ async fn main() {
         draw_rectangle(200.0, 500.0, 650.0, 200.0, DARKGREEN);
         if btn_hit.click() {
             if cards_revealed < player_cards.len() {
+                player_hand.push(cards[deck_index]);
+                deck_index += 1;
+
                 cards_revealed += 1;
             }
             hit = true;
@@ -251,6 +263,7 @@ async fn main() {
             lbl_money.set_text(format!("Cash: ${:.2}", account));
             player_hand.clear();
             dealer_hand.clear();
+            deck_index = 4;
         }
         if btn_deal.click() {
             let bet = txt_bet.get_text().trim().parse().unwrap_or(0.0);
@@ -267,6 +280,7 @@ async fn main() {
                 dealer_hand.push(cards[3]);
                 btn_hit.enabled = true;
                 btn_stand.enabled = true;
+                deck_index = 4;
                 game_start = true;
             } else {
             }
@@ -276,11 +290,13 @@ async fn main() {
         //if gamestart works fine but == true just makes it easier for me to read.
         if game_start == true {
             for i in 0..2 {
-                player_cards[i].set_preload(tm.get_preload(card_names[cards[i] as usize]).unwrap());
-                dealer_cards[0].set_preload(tm.get_preload(card_names[cards[i + 2] as usize]).unwrap());
+                player_cards[i].set_preload(tm.get_preload(card_names[player_hand[i] as usize]).unwrap());
                 player_cards[i].draw();
-                dealer_cards[i].draw();
+                dealer_cards[0].draw();
             }
+            dealer_cards[1].set_preload(tm.get_preload(card_names[dealer_hand[0] as usize]).unwrap());
+            dealer_cards[1].draw();
+
             if hit == true {
                 for i in 2..cards_revealed {
                     player_cards[i].set_preload(tm.get_preload(card_names[player_hand[i] as usize]).unwrap());
@@ -290,25 +306,33 @@ async fn main() {
             if stand == true {
                 btn_hit.enabled = false;
                 while dealer_score < 17 {
-                    dealer_cards_revealed+=1;
-                    for i in 0..dealer_cards_revealed {
-                        dealer_cards[i].set_preload(tm.get_preload(card_names[dealer_hand[i] as usize]).unwrap());
-                        dealer_cards[i].draw();
-                        card_value(dealer_hand[i]);
+                    dealer_cards_revealed += 1;
+                    dealer_hand.push(cards[deck_index]);
+                    deck_index += 1;
+                    dealer_score = 0;
+                    for i in 0..dealer_hand.len() {
+                        dealer_score += card_value(dealer_hand[i], dealer_score, player_score);
                     }
                 }
+
+                for i in 0..dealer_cards_revealed {
+                    dealer_cards[i].set_preload(tm.get_preload(card_names[dealer_hand[i] as usize]).unwrap());
+                    dealer_cards[i].draw();
+                }
+                dealer_cards[0].set_preload(tm.get_preload(card_names[dealer_hand[0] as usize]).unwrap());
+                lbl_dealer_score.set_text(&format!("Dealer Hand ({})", dealer_score));
             }
             if calc_score_player == true {
                 player_score = 0;
                 for i in 0..player_hand.len() {
-                    player_score += card_value(player_hand[i]);
+                    player_score += card_value(player_hand[i], dealer_score, player_score);
                 }
                 lbl_player_score.set_text(&format!("Player Hand ({})", player_score));
             }
             if calc_score_dealer == true {
                 dealer_score = 0;
                 for i in 0..dealer_hand.len() {
-                    dealer_score += card_value(dealer_hand[i]);
+                    dealer_score += card_value(dealer_hand[i], dealer_score, player_score);
                 }
                 lbl_dealer_score.set_text(&format!("Dealer Hand ({})", dealer_score));
             }
