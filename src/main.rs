@@ -17,11 +17,12 @@ it also has a way to enter in a bet and actually bet on the black jack and win c
 mod ui;
 mod utils;
 use crate::ui::grid::draw_grid;
-use crate::ui::label::{self, Label};
+use crate::ui::label::{Label};
 use crate::ui::still_image::StillImage;
 use crate::ui::text_button::TextButton;
 use crate::ui::text_input::TextInput;
 use crate::utils::preload_image::TextureManager;
+use crate::ui::messagebox::MessageBox;
 use macroquad::rand::ChooseRandom;
 use miniquad::date;
 
@@ -340,7 +341,10 @@ async fn main() {
             calc_score_player = false;
             calc_score_dealer = false;
             if player_score > 21 {
-                
+                btn_hit.enabled = false;
+                btn_stand.enabled = false;
+                let mut info_box = MessageBox::info("BUST!", "You scored over 21, you LOSE!");
+                info_box.show();
             }
             else if dealer_score > 21 {
                 account = account+bet*2.0;
@@ -362,3 +366,4 @@ async fn main() {
     }
 }
 //ask about using as in the code and .collect()
+// make the calculating the score of either player or dealer in a function.
